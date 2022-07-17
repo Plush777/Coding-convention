@@ -43,16 +43,14 @@
 
 <br>
 
-- [웹 접근성 (Web accessibility)](#웹-접근성-web-accessibility)
+- [웹 접근성 (Web accessibility)](#5-웹-접근성-web-accessibility)
 
-    - 건너뛰기 링크
-    - 본문 시작
-    - 대체 텍스트
-    - 드롭다운 메뉴
-    - 테이블
-    - 입력 폼 (input , checkbox , radio)
+    - [건너뛰기 링크](#5-1-건너뛰기-링크)
+    - [블라인드 텍스트](#5-2-블라인드-텍스트)
+    - [본문 시작 텍스트](#5-3-본문-시작-텍스트)
+    - [대체 텍스트](#5-4-대체-텍스트)
+    - [요소](#5-5-요소)
     - 새 창 및 팝업 창
-    - 제목
     - 초점
 
 <br><br>
@@ -654,4 +652,446 @@ ex) btn-close-hover.svg
 
 <br><br>
 
-## 웹 접근성 (Web accessibility)
+## 5. 웹 접근성 (Web accessibility)
+
+웹 접근성 코드 작성 규칙입니다.
+
+<br>
+
+### 5-1. 건너뛰기 링크
+
+많은 양의 컨텐츠들을 가지고 있는 홈페이지에서 원하는 영역을 도달하려면 `Tab` 키를 수도 없이 눌러야 하는데, 이 처럼 불필요한 액션을 없애기 위해 건너뛰기 링크 (Skip navigation) 이란 것을 제공해야 합니다.
+
+![image](https://user-images.githubusercontent.com/87457620/179388102-a097ca65-d86b-4641-84f0-0a14de820458.png)
+
+![image](https://user-images.githubusercontent.com/87457620/179388135-12161bcd-1479-47a8-b1c8-0d4db2561dad.png)
+
+<br>
+
+건너뛰기 링크의 위치는 `<body>` 바로 밑에 배치하는 것이 적절합니다.
+```html
+<body>
+    <div class="accNav">
+        <a href="#gnb">주요메뉴 바로가기</a>
+        <a href="#content">본문 바로가기</a>
+        <a href="#footer">푸터 바로가기</a>
+    </div>
+</body>
+```
+
+<br>
+
+css는 다음과 같이 `Tab` 키를 눌렀을 때 활성화가 되도록 코딩합니다. (방식은 작성자마다 다를 수 있습니다.)
+```css
+.accNav{
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    z-index: 999999999; 
+    width: 100%; 
+    height: 0;
+}
+
+.accNav a{
+    display: block; 
+    position: absolute; 
+    left: 0; 
+    top: 0; 
+    overflow: hidden; 
+    width: 1px; 
+    height: 1px; 
+    margin-left: -1px; 
+    margin-bottom: -1px; 
+    text-align: center; 
+    color: #fff;
+    white-space: nowrap; 
+    font-size: 0.75em;
+}
+
+.accNav a:focus,
+.accNav a:hover,
+.accNav a:active{
+    width: 100%;
+    height: auto; 
+    padding: 5px 0; 
+    font-weight: 700;
+    color: #4A2713; 
+    background: #ffc000; 
+    z-index: 1000; 
+}
+```
+
+[⬆️ top](#table-of-contents)
+
+<br><br>
+
+### 5-2. 블라인드 텍스트
+
+숨겨야 하는 콘텐츠이지만, 스크린 리더기에는 읽혀야 하는 경우 사용됩니다. `display: none` 혹은 `visibility: hidden` 속성은 스크린 리더기에서 읽히지 않기 때문에 사용하지 않습니다.
+
+```css
+.hidden{
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    font-size: 0;
+    line-height: 0;
+}
+```
+
+<br>
+
+✅ example
+```html
+<!-- table caption 숨김 -->
+<div class="table">
+    <table>
+        <caption class="hidden">테이블</caption>
+        <thead>
+            ...
+        </thead>
+        <tbody> 
+            ...
+        </tbody>
+    </table>
+</div>
+
+<!-- 텍스트가 없는 콘텐츠 설명 -->
+<button type="button" class="btnTop">
+    <span class="hidden">위로 올라가기</span>
+</button>
+```
+
+[⬆️ top](#table-of-contents)
+
+<br><br>
+
+### 5-3. 본문 시작 텍스트
+
+페이지의 콘텐츠가 시작되는 부분에 본문 시작 텍스트를 표시해야 합니다.
+
+```html
+<div id="wrap">
+    <header id="header">
+        ...
+    </header>
+    <div class="container">
+        <div id="content">
+            <h2 class="hidden">본문 시작</h2>
+            ...
+        </div>
+    </div>
+    <footer id="footer">
+        ...
+    </footer>
+</div>
+```
+
+[⬆️ top](#table-of-contents)
+
+<br><br>
+
+### 5-4. 대체 텍스트
+
+눈으로 화면을 볼 수 없는 경우 이미지에 대한 설명을 대체 텍스트로 입력하여 스크린 리더기를 통해 인식할 수 있게 합니다.
+
+![image](https://user-images.githubusercontent.com/87457620/179390122-16ecfb8e-a7d0-4786-807c-b4668c434bf8.png)
+
+<p style="font-size: 12px;">이미지 출처: NAVER</p>
+
+```html
+<img src="logo.png" alt="제74주년 제헌절">
+```
+
+<br>
+
+다음과 같은 이미지처럼 장식 목적의 이미지는 대체 텍스트를 빈 값으로 넣어서 스크린 리더기에 읽히지 않게 해야합니다.
+
+![image](https://user-images.githubusercontent.com/87457620/179390270-18ed2c93-e215-4a18-ae36-afdf7ca9c450.png)
+
+```html
+<img src="dummy-coding.png" alt="">
+```
+
+[⬆️ top](#table-of-contents)
+
+<br><br>
+
+### 5-5. 요소
+
+<br>
+
+#### A. 테이블
+
+테이블 태그 안에는 반드시 `<caption>` 태그로 테이블에 대한 제목을 작성해야 합니다.
+
+```html
+<div class="table">
+    <table>
+        <caption>테이블 제목</caption>
+    </table>
+</div>
+```
+
+<br>
+
+스크린 리더기를 사용하는 사용자가 오직 귀로만 테이블의 정보를 얻어야 할경우, `scope` 속성을 사용하여 테이블의 데이터를 인식하고 읽는 순서를 정해주어야 합니다.
+
+![image](https://user-images.githubusercontent.com/87457620/179393466-12b40d35-8e92-403a-a0fe-fa2f931b21cf.png)
+
+<br>
+
+위 이미지처럼 th의 방향이 열로 되어있을경우, `col` 로 정의합니다.
+
+```html
+<table>
+    <caption> 테이블 제목</caption>
+    <thead>
+        <tr>
+            <th scope="col">제목</th>
+            <th scope="col">제목</th>
+            <th scope="col">제목</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+        </tr>
+        <tr>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+        </tr>
+        <tr>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+        </tr>
+    </tbody>
+</table>
+```
+
+<br><br>
+
+![image](https://user-images.githubusercontent.com/87457620/179393641-d0d81d98-1168-43e7-a47f-8423583acfdb.png)
+
+반대로 th의 방향이 행으로 되어있을경우, `row` 로 정의합니다.
+
+```html
+<table>
+    <caption> 테이블 제목</caption>
+    <colgroup>
+        <col style="width: 300px;">
+        <col style="width: 700px;">
+    </colgroup>
+    <tbody>
+        <tr>
+            <th scope="row">제목</th>
+            <td>내용</td>
+        </tr>
+        <tr>
+            <th scope="row">제목</th>
+            <td>내용</td>
+        </tr>
+        <tr>
+            <th scope="row">제목</th>
+            <td>내용</td>
+        </tr>
+    </tbody>
+</table>
+```
+
+<br><br>
+
+![image](https://user-images.githubusercontent.com/87457620/179397281-7857af8f-4928-4cc1-bcae-98d47e371cfe.png)
+
+행 방향으로 병합 되어있을경우, `colgroup` 으로 정의합니다.
+
+```html
+<table>
+    <caption> 테이블 제목</caption>
+    <colgroup>
+        <col style="width: 200px;">
+        <col style="width: 150px;">
+        <col style="width: 150px;">
+        <col style="width: 150px;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th rowspan="2" scope="col">제목</th>
+            <th colspan="3" scope="colgroup">제목</th>
+        </tr>
+        <tr>
+            <th scope="col">제목</th>
+            <th scope="col">제목</th>
+            <th scope="col">제목</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th scope="row">제목</th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+        </tr>
+        <tr>
+            <th scope="row">제목</th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+        </tr>
+    </tbody>
+</table>
+```
+
+<br><br>
+
+![image](https://user-images.githubusercontent.com/87457620/179397606-24323d2f-1025-4c41-bfd2-b2599b905e17.png)
+
+열 방향으로 병합이 되어있을경우, `rowgroup` 으로 정의합니다.
+
+```html
+<table>
+    <caption>테이블 제목</caption>
+    <colgroup>
+        <col style="width: 200px;">
+        <col style="width: 200px;">
+        <col style="width: 120px;">
+        <col style="width: 120px;">
+        <col style="width: 120px;">
+    </colgroup>
+    <thead>
+        <tr>
+            <th scope="col">제목</th>
+            <th scope="col">제목</th>
+            <th colspan="3" scope="colgroup">제목</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th rowspan="3" scope="rowgroup">제목</th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+        </tr>
+        <tr>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+        </tr>
+        <tr>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+        </tr>
+        <tr>
+            <th rowspan="2" scope="rowgroup">제목</th>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+        </tr>
+        <tr>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+            <td>내용</td>
+        </tr>
+    </tbody>
+</table>
+```
+
+[⬆️ top](#table-of-contents)
+
+<br><br>
+
+#### B. 입력 폼 (input , checkbox , radio)
+
+<br>
+
+입력 폼에는 `<label>` 을 반드시 제공해야 합니다. 
+```html
+<label for="input01">
+<input type="text" id="input01"/>
+```
+
+<br>
+
+`<input>` 만 있는 경우 `title` 속성을 꼭 명시해야 합니다.
+```html
+<input type="text" id="user_name" title="아이디"/>
+```
+
+<br>
+
+읽기 전용 편집 창인경우 `title` 속성을 꼭 명시해야 합니다.
+```html
+<input type="text" readonly value="21" title="나이"/>
+```
+
+<br>
+
+`placeholder` 는 보조 수단으로 레이블 대체가 불가능하기 때문에 `title` 속성을 꼭 명시해야 합니다.
+```html
+<input type="text" placeholder="아이디 입력" title="아이디 입력"/>
+```
+
+<br>
+
+다수의 입력 서식이 존재하는 경우 `title` 속성으로 입력 내용을 상세히 명시합니다.
+
+```html
+<input type="text" placeholder="년(4자)" title="태어난 년도 4자리" />
+<input type="text" placeholder="월" title="태어난 월" />
+<input type="text" placeholder="일" title="태어난 일" />
+```
+
+<br>
+
+체크박스 , 라디오 버튼 등을 커스터마이징 하기위해 기본 스타일을 숨김처리 할 때 `display: none` , `visibility: hidden` 속성은 사용하지 않습니다. (작성 방식은 작성자마다 다를 수 있습니다.)
+
+✅ example
+```css
+input[type="checkbox"],input[type="radio"]{
+    -webkit-appearance: none;
+    position: absolute;
+    vertical-align: middle;
+    visibility: visible;
+    left: 0;
+}
+```
+
+<br>
+
+체크박스를 체크했을 때와 안했을 때, 라디오 버튼을 눌렀을 때 `aria-checked` 속성을 제공하여 선택됨과 선택안됨을 구분합니다.
+
+✅ example
+```html
+<!-- checkbox -->
+<div class="checkbox">
+    <input type="checkbox" id="chk01" aria-checked="false"/>
+    <label for="chk01">label</label>
+    <input type="checkbox" id="chk02" aria-checked="true"/>
+    <label for="chk02">label</label>
+</div>
+<!-- //checkbox -->
+
+<!-- radio -->
+<div class="radio">
+    <input type="radio" id="rd01" name="rd" aria-checked="false">
+    <label for="rd01">label</label>
+    <input type="radio" id="rd02" name="rd" aria-checked="true">
+    <label for="rd02">label</label>
+</div>
+<!-- //radio -->
+```
+
+[⬆️ top](#table-of-contents)
