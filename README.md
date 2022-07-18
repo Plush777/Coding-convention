@@ -1096,11 +1096,8 @@ input[type="checkbox"],input[type="radio"]{
 </div>
 <!-- //radio -->
 ```
-
 [⬆️ top](#table-of-contents)
 
 <br><br>
 
 ### 5-6. 새 창
-
-
